@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" nextobjectid="84">
+ <tileset firstgid="1" name="grass-tiles-2-small" tilewidth="32" tileheight="32" tilecount="72" columns="12">
+  <image source="../../../Documents/tileset/grass-tiles-2-small.png" width="384" height="192"/>
+ </tileset>
+ <tileset firstgid="73" source="../../../Documents/tileset/grass-tiles-2-small1.tsx"/>
+ <tileset firstgid="145" source="../../../Documents/tileset/littleshrooms_0.tsx"/>
+ <tileset firstgid="146" source="../../../Documents/tileset/qubodup-bush_0.tsx"/>
+ <tileset firstgid="147" source="../../../Documents/tileset/rsz_1rsz_tree2-final.tsx"/>
+ <tileset firstgid="156" source="../../../Documents/tileset/qubodup-bush_berries_0.tsx"/>
+ <tileset firstgid="157" source="../../../Documents/tileset/rsz_tree2-final.tsx"/>
+ <tileset firstgid="193" source="../../../Documents/tileset/tree2-final.tsx"/>
+ <tileset firstgid="257" name="stone 1" tilewidth="32" tileheight="32" tilecount="1" columns="1">
+  <image source="stone 1.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="258" name="flag2" tilewidth="32" tileheight="32" tilecount="1" columns="1">
+  <image source="../img/flag2.png" width="61" height="61"/>
+ </tileset>
+ <layer name="layer1" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzVV9tu2zAM1cuaFS6ytQgK5DJ0CdAsmfsBQfM0pEj//49moSJ6cEpSFxfB9nBgmyalI4qHlrsQwmnAzQXxOOA7AW0nBV//ITC35wHXBbgUv6PD70uyXSm2iLNhR//XAQ8D5pWQeI/f0bF1xC/a9gN+kz3y69O1Iz8ZZ5ru5Xqm+SSuhh+PczLsr+FjDSHHg/KO+dXk79L4H/jJ/nYF/LjWxb4E29nxL8GY/e3TOlgfy6DXTw/2WItSb5ITrL9Oia/htw62Pix+OPYLXF/Ihvd3I/jN4P0s2bBe1go2cI+xM4q9pvct/Kzx7h2sDRvz47WzPjx+kqu4j4sESx/zxKFVH/OG/PF6DomjVn+rZIv72oM/6uBAwByN0e8RxtsRP5lrpfgzB3lmnp/BT8ZHHpHfI0Ds2wbcGfvb2uM3I2JzwPOI54fayvHZFPrl5ps17G/U46IA4l/i68V7/B4Um3yvtO+S1DjXN+pD0wMi2n5SvNX/esUm65GzJGvS4yfYQew0AXvQU0P+WE+89inca/1BeGEu9+H9HI1nh9L+0ieOWv/bQsyfdN0q47f2l9L+1wf/fOp9Qz+rv1j1p+mjtkfkeOM5RjvT5PaXz9Ql/WVF/i3ng9L9tTSN6OjZ0ofmy88YPyF+Jf8fvB4NMr7W/wU759niV3M+wLXz1cqflkMvfzl9jM1fxK/w1m8jN/zX+Bbe+lKnXM8pd7n6Q0wMuweOmTjjaHZrf2u48Jwt6/DG9fKH/xq1sPanBLy/Vv0tlVitnvmdVz9ej6n9P79tWHuE9/2M2If3c0FOX2Pqz6o7SwcTQskcXv5yc9Zo0dOAx1vL/49KWPGt2kJYdevpgGNKOFvjlcwjPn8BPVjPYQ==
+  </data>
+ </layer>
+ <layer name="layer2" width="40" height="40" opacity="0.97">
+  <data encoding="base64" compression="zlib">
+   eJztlrsWgCAIQHXu6232YzuuhoKgAeldskLlqYTw5kKe9Ria25OjyBxkZG0FiKTN91+BFZus6DGK9dq5J8m24kNdv8yf4SuveSLBeo55QSN3pLEbmU+V5ehE9d3IeeOBGOVrcPw9Y98Z7HjeFhIwxnzBqdUEfCvU8deOw+o7SNs+Llb09tAjWPGVlJ4dEht7MWz9w+LO6QlqG/4SN8vk4KOGD3ywOkoNGWr9QXJQn6GBdH9t/Q/f0crZ+r13XmKynF7+AcYZJcw=
+  </data>
+ </layer>
+ <layer name="layer3" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztlFsKwCAMBL3/b5+2l20uoBDWNjbMwH4GA062FAAA8LJYVssWvUiD3XJYzuhFGlTLZbk/fJM/04j4MwCYBzpUI3uH4odGdj9gbrhfjQz3qzrQmx/hl+pAb36EX6oDvfkMfv0dj8MRfepxOKJPPQ6/6fsDydw1Fw==
+  </data>
+ </layer>
+ <objectgroup name="Obstacles">
+  <object id="5" name="wall" x="290.667" y="256.121" width="125.333" height="96"/>
+  <object id="6" name="player" x="26.25" y="572.083" width="18.6667" height="8.33337"/>
+  <object id="7" name="wall" x="294.5" y="417" width="118.5" height="125"/>
+  <object id="8" name="wall" x="482.333" y="417" width="126.667" height="125"/>
+  <object id="9" name="wall" x="295" y="97" width="119" height="96"/>
+  <object id="10" name="wall" x="673" y="417" width="445" height="118"/>
+  <object id="12" name="wall" x="673.5" y="255" width="445" height="95"/>
+  <object id="13" name="wall" x="675.5" y="96" width="442" height="96"/>
+  <object id="14" name="wall" x="675.5" y="609" width="445" height="150"/>
+  <object id="15" name="wall" x="673.5" y="833" width="445" height="158"/>
+  <object id="16" name="wall" x="678.5" y="1056" width="438" height="96"/>
+  <object id="17" name="wall" x="-2.5" y="1216" width="1281" height="62"/>
+  <object id="18" name="wall" x="292" y="609" width="314" height="157"/>
+  <object id="19" name="wall" x="479" y="96" width="128" height="96"/>
+  <object id="20" name="wall" x="292" y="833.5" width="312" height="157"/>
+  <object id="21" name="wall" x="133" y="1058.5" width="472" height="93"/>
+  <object id="22" name="wall" x="131.5" y="98" width="85.4545" height="445.045"/>
+  <object id="23" name="wall" x="131" y="609.5" width="86" height="383"/>
+  <object id="24" name="wall" x="-1" y="608.5" width="59" height="602"/>
+  <object id="25" name="wall" x="-1.5" y="0" width="60.3333" height="543"/>
+  <object id="26" name="wall" x="62.5" y="1" width="1215.12" height="29"/>
+  <object id="27" name="wall" x="1190.67" y="30.3333" width="88.3333" height="1185.33"/>
+  <object id="28" name="wall" x="2.5" y="544" height="64"/>
+  <object id="29" name="wall" x="484.333" y="258.667" width="123" height="96"/>
+  <object id="75" name="dest" x="1148.16" y="156.333" width="6.33337" height="6.83337"/>
+  <object id="78" name="mob" x="674.667" y="550.667" width="22.6667" height="20"/>
+  <object id="79" name="mob" x="354" y="585.333" width="26.6666" height="17.3333"/>
+  <object id="80" name="mob" x="610.667" y="677.333" width="22.6666" height="20"/>
+  <object id="81" name="diem" x="1149.33" y="574.667" width="5.66667" height="3.33333"/>
+ </objectgroup>
+</map>
