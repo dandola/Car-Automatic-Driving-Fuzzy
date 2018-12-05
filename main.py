@@ -26,6 +26,13 @@ def draw_traffic_light(surf, x, y, col1, col2, col3):
     outline_rect = pg.Rect(x,y,BAR_LENGTH, BAR_HEIGHT)
     pg.draw.rect(surf, LIGHTGREY, outline_rect,1)
 
+def draw_times(surf, text, size, x,y) :
+    font= pg.font.Font(pg.font.match_font('arial'),size)
+    text_surface = font.render(text, True, RED)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
+
 def draw_speed(surf, text, size, x,y) :
     font= pg.font.Font(pg.font.match_font('arial'),size)
     text_surface = font.render(text, True, RED)
@@ -100,28 +107,31 @@ class Game:
 
 
     def draw_traffic(self):
-        self.time = pg.time.get_ticks()/1000 % 10
+        self.time = pg.time.get_ticks()/1000 % 8
         # print self.time
         self.times = self.time + 1
         self.color_light1 = HIGH_RED
         self.color_light2 = HIGH_YELLOW
         self.color_light3 = HIGH_GREEN
-        if self.time < 4:
+        if self.time < 3:
             self.color_light1 = RED
             self.color_light = RED
+            self.Trafficlight.light_status = RED
             self.color_light2 = HIGH_YELLOW
             self.color_light3 = HIGH_GREEN
-        elif self.time < 8:
-            self.times = 1
+        elif self.time < 6:
+            self.times = self.time - 2
             self.color_light1 = HIGH_RED
             self.color_light2 = HIGH_YELLOW
             self.color_light3 = GREEN
             self.color_light = GREEN
-        elif self.time < 10:
-            self.times = 1
+            self.Trafficlight.light_status = GREEN
+        elif self.time < 8:
+            self.times = self.time - 5
             self.color_light1 = HIGH_RED
             self.color_light2 = YELLOW
             self.color_light = YELLOW
+            self.Trafficlight.light_status = YELLOW
             self.color_light3 = HIGH_GREEN
             
 
@@ -148,6 +158,7 @@ class Game:
         draw_traffic_light(self.Trafficlight.image, 0, 0, self.color_light1, self.color_light2, self.color_light3)
         # draw_traffic_light(self.screen, 500, 10, self.color_light1, self.color_light2, self.color_light3)
         draw_speed(self.screen, str("{:.0f} km/h".format(self.player.player_speed)), 40, 280, 5)
+        draw_times(self.screen, str(self.times.__int__()), 40, 680, 10)
         # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
         pg.display.flip()
 
