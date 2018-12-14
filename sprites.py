@@ -42,6 +42,7 @@ class Player(pg.sprite.Sprite):
         self.player_speed = PLAYER_SPEED
         self.rot_speed = 0
         self.rot = 0
+        self.angle = 0
         self.index = 0
 
     # def get_keys(self):
@@ -61,19 +62,53 @@ class Player(pg.sprite.Sprite):
         distance = math.sqrt((dest.x - self.pos.x)**2 + (dest.y - self.pos.y)**2)
         return distance
 
+    def get_distance_walls(self):
+        list_expected_walls = []
+        list_walls = []
+        for wall in self.game.walls:
+            axis_x = math.fabs(wall.x - self.pos.x)
+            axis_y = math.fabs(wall.y - self.pos.y)
+            distance = math.sqrt(axis_x**2 + axis_y**2)
+            list_walls.append({"wall": wall, "distance": distance})
+        list_walls.sort()
+        walls = list_walls[:4]
+        for wall in walls:
+            axis_x = math.fabs(wall["wall"].x - self.pos.x)
+            axis_y = math.fabs(wall["wall"].y - self.pos.y)
+            if axis_x <= wall["wall"].width/2.0:
+                list_expected_walls.append({"wall": wall["wall"], "distance": axis_y - wall["wall"].height/2.0})
+            elif axis_y <= wall["wall"].height/2.0:
+                list_expected_walls.append({"wall": wall["wall"], "distance": axis_x - wall["wall"].width/2.0})
+            else:
+                continue
+        if len(list_expected_walls) >= 2:
+            list_expected_walls.sort()
+            return list_expected_walls[0]["distance"], list_expected_walls[1]["distance"]
+        else:
+            return 0.5, 0.5
+    
+    def get_distance_traffic(self):
+        axis_x = math.fabs(self.pos.x - self.game.traffic_light.x)
+        axis_y = math.fabs(self.pos.y - self.game.traffic_light.y)
+        if axis_x <= self.game.traffic_light.width/2.0 and axis_y > self.game.traffic_light.height/2.0:
+            return axis_y - self.game.traffic_light.height/2.0
+        elif axis_y <= self.game.traffic_light.height/2.0 and axis_x > self.game.traffic_light.width/2.0:
+             return axis_x - self.game.traffic_light.width/2.0
+        elif axis_y <= self.game.traffic_light.height/2.0 and axis_x <= self.game.traffic_light.width/2.0:
+            return 0
+        else:
+            return math.sqrt((self.pos.x - self.game.traffic_light.x)**2 + (self.game.traffic_light.y - self.pos.y)**2)
+
     def update(self):
-        # list_points = self.path
-        # # print list_points
-        # immediate_point = None
-        # path_min = math.sqrt((self.game.flag.pos.x - self.pos.x)**2 + (self.game.flag.pos.y - self.pos.y)**2)
-        # for point in list_points:
-        #     distance = math.sqrt((point[0] - self.pos.x)**2 + (point[1] - self.pos.y)**2)
-        #     if distance <= path_min:
-        #         path_min = distance
-        #         immediate_point = point
-        # print self.path
+        #status traffic light
+        status_light = self.game.traffic_light.light_status
+        #distance between walls and car
+        wall1, wall2 = self.get_distance_walls()
+        #distance between traffic light and car
+        distance_traffic_light = self.get_distance_traffic()
+        sum = wall1 + wall2
+        # print "distance between two wall: ", round(wall1*1.0/sum,3), round(wall2*1.0/sum,3)
         self.rot = (self.path[self.index] - self.pos).angle_to(vec(1,0))%360
-        # print self.rot
         self.image = pg.transform.rotate(self.game.player_img, self.rot)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
@@ -85,6 +120,8 @@ class Player(pg.sprite.Sprite):
                 self.index -= 1
                 self.player_speed = 0
         # change_car_speed
+    # def change_speed_traffic(self):
+        
 
 
     def move(self, distance):
@@ -104,17 +141,6 @@ class Player(pg.sprite.Sprite):
 
 
 
-class Stone(pg.sprite.Sprite):
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.stones
-        pg.sprite.Sprite.__init__(self, self.groups)
-        self.game = game
-        self.image = game.stone_img
-        self.rect = self.image.get_rect()
-        self.vel = vec(0, 0)
-        self.pos = vec(x, y)
-
-
 class Flag(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
@@ -129,42 +155,52 @@ class Flag(pg.sprite.Sprite):
         self.hit_rect.center = self.rect.center
 
 
+class Stone(pg.sprite.Sprite):
+    def __init__(self, game,id, x, y, w, h):
+        self.groups = game.all_sprites
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.id = id
+        self.image = game.stone_img
+        self.rect = game.flag_img.get_rect()
+        self.pos = vec(x ,y)
+        self.rect.x = x
+        self.rect.y = y
+        self.hit_rect = pg.Rect(x,y,w,h)
+        self.hit_rect.center = self.rect.center
+
+
 class Traffic_light(pg.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
+        self.width = w 
+        self.height = h 
         self.rect = pg.Rect(x,y,w,h)
         self.image = pg.Surface((w,h))
         self.image.fill(LIGHTGREY)
-        self.pos = vec(x ,y)
+        self.pos = vec(x + w/2.0,y + h/2.0)
         self.rect.x = x
-        self.rect.y = y
+        self.rect.y = y 
+        self.x = x + w/2.0
+        self.y = y + h/2.0
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = self.rect.center
         self.light_status = None
 
-
-class Wall(pg.sprite.Sprite):
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.walls
-        pg.sprite.Sprite.__init__(self, self.groups)
-        self.game = game
-        self.image = game.wall_img
-        self.rect = self.image.get_rect()
-        self.x = x
-        self.y = y
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
-
-
 class Obstacle(pg.sprite.Sprite):
-    def __init__(self, game, x, y, w, h):
+    def __init__(self, game, id, x, y, w, h):
         self.groups = game.walls
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
+        self.id = id
         self.rect = pg.Rect(x,y,w,h)
-        self.x = x
-        self.y = y
+        self.x = x + w/2.0
+        self.y = y + h/2.0
         self.rect.x = x 
         self.rect.y = y
+        self.width = w
+        self.height = h
+
+

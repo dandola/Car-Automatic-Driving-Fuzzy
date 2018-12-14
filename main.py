@@ -22,7 +22,6 @@ def draw_traffic_light(surf, x, y, col1, col2, col3):
     pg.draw.ellipse(surf, col1, fill_red)
     pg.draw.ellipse(surf, col2, fill_amber)
     pg.draw.ellipse(surf, col3, fill_green)
-
     outline_rect = pg.Rect(x,y,BAR_LENGTH, BAR_HEIGHT)
     pg.draw.rect(surf, LIGHTGREY, outline_rect,1)
 
@@ -35,7 +34,7 @@ def draw_times(surf, text, size, x,y) :
 
 def draw_speed(surf, text, size, x,y) :
     font= pg.font.Font(pg.font.match_font('arial'),size)
-    text_surface = font.render(text, True, RED)
+    text_surface = font.render(text, True, WHITE)
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x, y)
     surf.blit(text_surface, text_rect)
@@ -78,10 +77,12 @@ class Game:
                         self.player.path.append(vec(object.x,object.y))
             if tile_object.name == "dest":
                 self.flag = Flag(self, tile_object.x, tile_object.y)
+            if tile_object.name == "stone":
+                Stone(self, tile_object.id, tile_object.x, tile_object.y,tile_object.width, tile_object.height)
             if tile_object.name == "wall":
-                Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                Obstacle(self, tile_object.id ,tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == "traffic_light":
-                self.Trafficlight = Traffic_light(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+                self.traffic_light = Traffic_light(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
         self.player.path.append(self.flag.pos)
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
@@ -116,7 +117,7 @@ class Game:
         if self.time < 3:
             self.color_light1 = RED
             self.color_light = RED
-            self.Trafficlight.light_status = RED
+            self.traffic_light.light_status = RED
             self.color_light2 = HIGH_YELLOW
             self.color_light3 = HIGH_GREEN
         elif self.time < 6:
@@ -125,13 +126,13 @@ class Game:
             self.color_light2 = HIGH_YELLOW
             self.color_light3 = GREEN
             self.color_light = GREEN
-            self.Trafficlight.light_status = GREEN
+            self.traffic_light.light_status = GREEN
         elif self.time < 8:
             self.times = self.time - 5
             self.color_light1 = HIGH_RED
             self.color_light2 = YELLOW
             self.color_light = YELLOW
-            self.Trafficlight.light_status = YELLOW
+            self.traffic_light.light_status = YELLOW
             self.color_light3 = HIGH_GREEN
             
 
@@ -151,14 +152,10 @@ class Game:
         if self.draw_debug:
             for wall in self.walls:
                 pg.draw.rect(self.screen, CYAN, self.camera.apply_rect(wall.rect),1)
-
-        # area_traffic = self.Trafficlight.image
-        # traffic = pg.Surface((50,100))
-        # area_traffic.blit(traffic, (0,0))
-        draw_traffic_light(self.Trafficlight.image, 0, 0, self.color_light1, self.color_light2, self.color_light3)
+        draw_traffic_light(self.traffic_light.image, 0, 0, self.color_light1, self.color_light2, self.color_light3)
         # draw_traffic_light(self.screen, 500, 10, self.color_light1, self.color_light2, self.color_light3)
-        draw_speed(self.screen, str("{:.0f} km/h".format(self.player.player_speed)), 40, 280, 5)
-        draw_times(self.screen, str(self.times.__int__()), 40, 680, 10)
+        draw_speed(self.screen, str("{:.0f} km/h".format(self.player.player_speed)), 32, 280, 5)
+        # draw_times(self.screen, str(self.times.__int__()), 40, 680, 10)
         # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
         pg.display.flip()
 

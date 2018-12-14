@@ -35,7 +35,7 @@ STONE_IMG = 'stone.png'
 FLAG_IMG = 'flag4.png'
 
 # Player settings
-PLAYER_SPEED = 100.0
+PLAYER_SPEED = 50.0
 PLAYER_ROT_SPEED = 250.0
 PLAYER_IMG = 'car4.png'
 PLAYER_HIT_RECT = pg.Rect(0, 0, 32, 32)
