@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" nextobjectid="105">
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" nextobjectid="106">
  <tileset firstgid="1" source="street.tsx"/>
  <tileset firstgid="2853" source="stone.tsx"/>
  <tileset firstgid="2854" source="gold_stone.tsx"/>
@@ -98,18 +98,18 @@
   <object id="13" name="wall" x="416.013" y="1184" width="864" height="96"/>
   <object id="15" name="wall" x="-0.00390625" y="0.0027705" width="416" height="576"/>
   <object id="16" name="wall" x="0.00390625" y="703.999" width="416" height="576"/>
-  <object id="17" name="wall" x="1216.01" y="576.002" width="64" height="608"/>
+  <object id="17" name="wall" x="1216.01" y="640.085" width="64" height="543.917"/>
   <object id="24" name="wall" x="544.016" y="704.005" width="544" height="352"/>
-  <object id="25" name="point" x="1158.85" y="640.376" width="3.52355" height="3.00906"/>
-  <object id="51" name="wall" x="1216" y="63.9937" width="64" height="512"/>
+  <object id="25" name="point" x="1156.9" y="640.126" width="3.52355" height="3.00906"/>
+  <object id="51" name="wall" x="1216" y="63.9937" width="64" height="575.938"/>
   <object id="53" name="stone" x="713.166" y="653.5" width="32" height="32"/>
   <object id="67" name="stone" x="869.167" y="594.083" width="32" height="32"/>
-  <object id="68" name="stone" x="992.688" y="658.187" width="32" height="32"/>
+  <object id="68" name="stone" x="1023.35" y="654.187" width="32" height="32"/>
   <object id="69" name="stone" x="1148.35" y="900.854" width="32" height="32"/>
-  <object id="70" name="stone" x="1134.35" y="277.521" width="32" height="32"/>
+  <object id="70" name="stone" x="1168.35" y="255.521" width="32" height="32"/>
   <object id="75" name="stone" x="495.021" y="656.854" width="32" height="32"/>
-  <object id="103" name="dest" x="1149.56" y="121.708" width="6.20833" height="5.91667"/>
-  <object id="104" name="player" x="28.6667" y="623.333" width="32" height="32" rotation="0.27622"/>
+  <object id="103" name="dest" x="1152.38" y="117.64" width="6.20833" height="5.91667"/>
+  <object id="105" name="player" x="34" y="641.333" width="32" height="32" rotation="0.27622"/>
  </objectgroup>
  <objectgroup name="TrafficLight">
   <object id="61" name="traffic_light" x="386.604" y="613.917" width="30" height="90"/>

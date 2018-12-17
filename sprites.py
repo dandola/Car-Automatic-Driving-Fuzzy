@@ -82,6 +82,7 @@ class Player(pg.sprite.Sprite):
         for wall in walls:
             axis_x = math.fabs(wall["wall"].x - self.pos.x)
             axis_y = math.fabs(wall["wall"].y - self.pos.y)
+            # print wall["wall"].id, axis_x, axis_y, wall["wall"].width, wall["wall"].height
             if axis_x <= wall["wall"].width/2.0:
                 list_expected_walls.append({"wall": wall["wall"], "distance": axis_y - wall["wall"].height/2.0})
             elif axis_y <= wall["wall"].height/2.0:
@@ -93,16 +94,20 @@ class Player(pg.sprite.Sprite):
             list_expected_walls.sort()
             rot0 = (list_expected_walls[0]["wall"].pos - self.pos).angle_to(vec(self.path[self.index] - self.pos))
             rot1 = (list_expected_walls[1]["wall"].pos - self.pos).angle_to(vec(self.path[self.index] - self.pos))
-            if rot0 > 0:
+            print rot0%360
+            print rot1%360
+            if rot0%360 > 0 and rot0%360 < 180:
                 left = list_expected_walls[0]
             else:
                 right = list_expected_walls[0]
-            if rot1 > 0:
-                left = list_expected_walls[1]
-            else:
+            if rot1%360 > 180 and rot1%360 < 360:
                 right = list_expected_walls[1]
+            else:
+                left = list_expected_walls[1]
+            print left["wall"].id, right["wall"].id
             return left["distance"], right["distance"]
         else:
+            print 0.5, 0.5
             return 0.5, 0.5
 
 
@@ -153,11 +158,51 @@ class Player(pg.sprite.Sprite):
             min = 200
         return closest_stone, min
 
+
+    def get_deviation(self, deviation1, deviation2):
+        deviation = None
+        if deviation1 == None:
+            if deviation2 == None:
+                deviation  = 0.5
+            else:
+                deviation  = deviation2
+        else:
+            if deviation2 == None:
+                deviation = deviation1
+            else:
+                if(deviation1 < 0.5 and deviation2 < 0.5):
+                    deviation  = min(deviation1, deviation2)
+                elif deviation1 > 0.5 and deviation2 > 0.5:
+                    deviation  = max(deviation1,deviation2)
+                elif deviation2 == 0.5:
+                    deviation  = deviation1
+                else:
+                    deviation  = deviation2
+        return deviation
+
+    def get_velocity(self, vel1, vel2):
+        vel = None
+        if vel1 == None:
+            if vel2 == None:
+                vel = 1
+            else:
+                vel = vel2
+        else:
+            if vel2 == None:
+                vel = vel1
+            else:
+                vel = min(vel1, vel2)
+        return vel
+
+
     def update(self):
+        nearest_stone = None
+        distance_stone = None
         deviation = vel = None
         deviation2 = deviation1 = None
         vel2 = vel1 = None
         left_right_stone = None
+        # print self.rot
         status_light = self.game.traffic_light.light_status
         left_wall, right_wall = self.get_distance_walls()
         sum = left_wall + right_wall
@@ -186,40 +231,17 @@ class Player(pg.sprite.Sprite):
         else:
             deviation2 = None
             vel2 = None
-        if vel1==None:
-            if vel2 == None:
-                vel= 1
-            else: vel = vel2
-        else:
-            if vel2==None:
-                vel= vel1
-            else:
-                vel = min(vel1, vel2)
-        if deviation1 == None:
-            if deviation2 == None:
-                deviation  = 0.5 
-            else:
-                deviation  = deviation2
-        else:
-            if deviation2 == None:
-                deviation = deviation1
-            else:
-                if(deviation1 < 0.5 and deviation2 < 0.5):
-                    deviation  = min(deviation1, deviation2)
-                elif deviation1 > 0.5 and deviation2 > 0.5:
-                    deviation  = max(deviation1,deviation2)
-                elif deviation2 == 0.5:
-                    deviation  = deviation1
-                else:
-                    deviation  = deviation2
+
+        vel = self.get_velocity(vel1, vel2)
+        deviation = self.get_deviation(deviation1, deviation2)
         # --> vel, deviation
         self.player_speed = vel*100
         angle = (math.asin(math.fabs((deviation - 0.5)/0.5)))*180/math.pi
+        # print angle
         if deviation > 0.5:
-            self.rot = angle*-1
+            self.rot = (self.path[self.index] - self.pos).angle_to(vec(1,0)) + angle*(-1)
         else:
-            self.rot = angle
-        # self.rot = (self.path[self.index] - self.pos).angle_to(vec(1,0))
+            self.rot = (self.path[self.index] - self.pos).angle_to(vec(1,0)) + angle
         self.image = pg.transform.rotate(self.game.player_img, self.rot)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
@@ -229,16 +251,10 @@ class Player(pg.sprite.Sprite):
         if distance <= 30:
             self.index +=1
             if self.index == len(self.path)-1:
-                self.player_speed = 0
-                self.rot = (self.path[self.index] - self.pos).angle_to(vec(1, 0))
+                self.rot = (self.path[self.index] - self.pos).angle_to(vec(1,0))
                 self.image = pg.transform.rotate(self.game.player_img, self.rot)
-                print self.rot
-                print "dasjdhsad"
-                # self.rect = self.image.get_rect()
-                # self.rect.center = self.pos
-
-        
-
+                self.rect = self.image.get_rect()
+                self.rect.center = self.pos
 
     def move(self, distance):
         if distance < 30:
