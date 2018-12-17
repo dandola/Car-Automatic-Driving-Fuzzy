@@ -4,7 +4,7 @@ import pygame as pg
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 DARKGREY = (40, 40, 40)
-LIGHTGREY = (100, 100, 100)
+LIGHTGREY = (110, 110, 110)
 
 GREEN = (48, 255, 2)
 HIGH_GREEN = (0,60,0)
@@ -29,13 +29,15 @@ TILESIZE = 32
 GRIDWIDTH = WIDTH / TILESIZE
 GRIDHEIGHT = HEIGHT / TILESIZE
 
+WIDTH_PATH = 128
+
 
 WALL_IMG ='tileGreen_39.png'
 STONE_IMG = 'stone.png'
 FLAG_IMG = 'flag4.png'
 
 # Player settings
-PLAYER_SPEED = 50.0
+PLAYER_SPEED = 100.0
 PLAYER_ROT_SPEED = 250.0
 PLAYER_IMG = 'car4.png'
 PLAYER_HIT_RECT = pg.Rect(0, 0, 32, 32)

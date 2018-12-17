@@ -1,13 +1,18 @@
 import pygame as pg
 from settings import *
 from tilemap import collide_hit_rect
-vec = pg.math.Vector2
 import math
+from XLTTM import cal_steering, cal_speed
+from XLTTM import cal_speed_stone_left, cal_speed_stone_right
+from XLTTM import cal_steering_right, cal_steering_left
+import numpy as np
+
+vec = pg.math.Vector2
+
 
 def collide_with_walls(sprite, group, dir):
     if dir == 'x':
         hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
-        # print(hits)
         if hits:
             if hits[0].rect.centerx > sprite.hit_rect.centerx:
                 sprite.pos.x = hits[0].rect.left - sprite.hit_rect.width /2.0
@@ -18,7 +23,6 @@ def collide_with_walls(sprite, group, dir):
     if dir == 'y':
         hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
         if hits:
-            # print hits
             if hits[0].rect.centery > sprite.hit_rect.centery:
                 sprite.pos.y = hits[0].rect.top - sprite.hit_rect.height / 2.0
             if hits[0].rect.centery < sprite.hit_rect.centery:
@@ -34,6 +38,8 @@ class Player(pg.sprite.Sprite):
         self.image = game.player_img
         self.rect = self.image.get_rect()
         self.hit_rect = PLAYER_HIT_RECT
+        self.rect.x = x
+        self.rect.y = y
         self.hit_rect.center = self.rect.center
         self.pos = vec(x, y)
         self.vel = vec(0, 0)
@@ -44,6 +50,7 @@ class Player(pg.sprite.Sprite):
         self.rot = 0
         self.angle = 0
         self.index = 0
+        self.closest_stone = None
 
     # def get_keys(self):
     #     self.rot_speed = 0
@@ -82,45 +89,154 @@ class Player(pg.sprite.Sprite):
             else:
                 continue
         if len(list_expected_walls) >= 2:
+            left = right = None
             list_expected_walls.sort()
-            return list_expected_walls[0]["distance"], list_expected_walls[1]["distance"]
+            rot0 = (list_expected_walls[0]["wall"].pos - self.pos).angle_to(vec(self.path[self.index] - self.pos))
+            rot1 = (list_expected_walls[1]["wall"].pos - self.pos).angle_to(vec(self.path[self.index] - self.pos))
+            if rot0 > 0:
+                left = list_expected_walls[0]
+            else:
+                right = list_expected_walls[0]
+            if rot1 > 0:
+                left = list_expected_walls[1]
+            else:
+                right = list_expected_walls[1]
+            return left["distance"], right["distance"]
         else:
             return 0.5, 0.5
+
+
+    def get_distance_wall_stone(self, stone):
+        list_expected_walls = []
+        list_walls = []
+        for wall in self.game.walls:
+            axis_x = math.fabs(wall.x - stone.pos.x)
+            axis_y = math.fabs(wall.y - stone.pos.y)
+            distance = math.sqrt(axis_x**2 + axis_y**2)
+            if axis_x <= wall.width/2:
+                distance =  axis_y - wall.height/2.0
+            elif axis_y <= wall.height/2.0:
+                distance =  axis_x - wall.width/2.0
+            else:
+                distance = math.sqrt(axis_x**2 + axis_y**2)
+            list_walls.append({"wall": wall, "distance": distance})
+        list_walls.sort()
+        # for wall in list_walls:
+            # print wall['wall'].id, wall["distance"]
+        # print "\n"
     
     def get_distance_traffic(self):
         axis_x = math.fabs(self.pos.x - self.game.traffic_light.x)
         axis_y = math.fabs(self.pos.y - self.game.traffic_light.y)
         if axis_x <= self.game.traffic_light.width/2.0 and axis_y > self.game.traffic_light.height/2.0:
-            return axis_y - self.game.traffic_light.height/2.0
+            return axis_y - self.game.traffic_light.height/2.0 - self.rect.w/2.0
         elif axis_y <= self.game.traffic_light.height/2.0 and axis_x > self.game.traffic_light.width/2.0:
-             return axis_x - self.game.traffic_light.width/2.0
+             return axis_x - self.game.traffic_light.width/2.0 - self.rect.w/2.0
         elif axis_y <= self.game.traffic_light.height/2.0 and axis_x <= self.game.traffic_light.width/2.0:
             return 0
         else:
-            return math.sqrt((self.pos.x - self.game.traffic_light.x)**2 + (self.game.traffic_light.y - self.pos.y)**2)
+            return axis_x - self.game.traffic_light.width/2.0 - self.rect.w/2.0
+
+    def get_min_distance_stone(self, dest):
+        angle = (dest - self.pos).angle_to(vec(1,0))
+        closest_stone = None
+        min = self.distance(dest)
+        for stone in self.game.stones:
+            rot_stone = (stone.pos - self.pos).angle_to(vec(1,0))
+            distance = self.distance(stone) -  stone.rect.w/2.0 - self.rect.w/2.0
+            if distance >= 100:
+                continue
+            if math.fabs(angle - rot_stone) < 90 and distance <= min:
+                min = distance
+                closest_stone = stone
+        if min == self.distance(dest):
+            min = 200
+        return closest_stone, min
 
     def update(self):
-        #status traffic light
+        deviation = vel = None
+        deviation2 = deviation1 = None
+        vel2 = vel1 = None
+        left_right_stone = None
         status_light = self.game.traffic_light.light_status
-        #distance between walls and car
-        wall1, wall2 = self.get_distance_walls()
-        #distance between traffic light and car
+        left_wall, right_wall = self.get_distance_walls()
+        sum = left_wall + right_wall
+        dev = left_wall*1.0/(right_wall + left_wall)
         distance_traffic_light = self.get_distance_traffic()
-        sum = wall1 + wall2
-        # print "distance between two wall: ", round(wall1*1.0/sum,3), round(wall2*1.0/sum,3)
-        self.rot = (self.path[self.index] - self.pos).angle_to(vec(1,0))%360
+        nearest_stone, distance_stone = self.get_min_distance_stone(self.path[self.index])
+        if nearest_stone:
+            self.closest_stone = nearest_stone
+            angle_car_stone = (self.closest_stone.pos - self.pos).angle_to(self.path[self.index] - self.pos)
+            distance_car_stone = self.distance(self.closest_stone)
+            height = round(distance_car_stone*round(math.sin(math.radians(angle_car_stone)),2),2)
+            left = WIDTH_PATH/2 - height - self.closest_stone.rect.w/2.0
+            right = WIDTH_PATH - left - self.closest_stone.rect.w
+            if left > right:
+                left_right_stone ="right"
+            else:
+                left_right_stone ="left"
+        deviation1 = cal_steering(dev)
+        vel1 = cal_speed(status_light, distance_traffic_light, dev)
+        if left_right_stone == "left":
+            deviation2 =  cal_steering_left(dev, distance_stone)
+            vel2 = cal_speed_stone_left( dev, distance_stone)
+        elif left_right_stone == "right":
+            deviation2 =  cal_steering_right(dev, distance_stone)
+            vel2 = cal_speed_stone_right( dev, distance_stone)
+        else:
+            deviation2 = None
+            vel2 = None
+        if vel1==None:
+            if vel2 == None:
+                vel= 1
+            else: vel = vel2
+        else:
+            if vel2==None:
+                vel= vel1
+            else:
+                vel = min(vel1, vel2)
+        if deviation1 == None:
+            if deviation2 == None:
+                deviation  = 0.5 
+            else:
+                deviation  = deviation2
+        else:
+            if deviation2 == None:
+                deviation = deviation1
+            else:
+                if(deviation1 < 0.5 and deviation2 < 0.5):
+                    deviation  = min(deviation1, deviation2)
+                elif deviation1 > 0.5 and deviation2 > 0.5:
+                    deviation  = max(deviation1,deviation2)
+                elif deviation2 == 0.5:
+                    deviation  = deviation1
+                else:
+                    deviation  = deviation2
+        # --> vel, deviation
+        self.player_speed = vel*100
+        angle = (math.asin(math.fabs((deviation - 0.5)/0.5)))*180/math.pi
+        if deviation > 0.5:
+            self.rot = angle*-1
+        else:
+            self.rot = angle
+        # self.rot = (self.path[self.index] - self.pos).angle_to(vec(1,0))
         self.image = pg.transform.rotate(self.game.player_img, self.rot)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
+        self.hit_rect.center = self.pos
         distance = self.distance(self.path[self.index])
         self.move(distance)
-        if distance <= 20:
+        if distance <= 30:
             self.index +=1
-            if self.index == len(self.path):
-                self.index -= 1
+            if self.index == len(self.path)-1:
                 self.player_speed = 0
-        # change_car_speed
-    # def change_speed_traffic(self):
+                self.rot = (self.path[self.index] - self.pos).angle_to(vec(1, 0))
+                self.image = pg.transform.rotate(self.game.player_img, self.rot)
+                print self.rot
+                print "dasjdhsad"
+                # self.rect = self.image.get_rect()
+                # self.rect.center = self.pos
+
         
 
 
@@ -135,8 +251,7 @@ class Player(pg.sprite.Sprite):
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.walls,'x')
         self.hit_rect.centery = self.pos.y
-        collide_with_walls(self, self.game.stones,'y')
-        # self.rect.center = self.hit_rect.center
+        collide_with_walls(self, self.game.walls,'y')
         self.rect.center = self.pos
 
 
@@ -154,20 +269,6 @@ class Flag(pg.sprite.Sprite):
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = self.rect.center
 
-
-class Stone(pg.sprite.Sprite):
-    def __init__(self, game,id, x, y, w, h):
-        self.groups = game.all_sprites
-        pg.sprite.Sprite.__init__(self, self.groups)
-        self.game = game
-        self.id = id
-        self.image = game.stone_img
-        self.rect = game.flag_img.get_rect()
-        self.pos = vec(x ,y)
-        self.rect.x = x
-        self.rect.y = y
-        self.hit_rect = pg.Rect(x,y,w,h)
-        self.hit_rect.center = self.rect.center
 
 
 class Traffic_light(pg.sprite.Sprite):
@@ -189,6 +290,23 @@ class Traffic_light(pg.sprite.Sprite):
         self.hit_rect.center = self.rect.center
         self.light_status = None
 
+class Stone(pg.sprite.Sprite):
+    def __init__(self, game,id, x, y, w, h):
+        self.groups = game.all_sprites, game.stones
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.id = id
+        self.image = game.stone_img
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.pos = vec(self.rect.x + self.rect.w/2.0,self.rect.y + self.rect.h/2.0)
+        self.x = self.rect.x + self.rect.w/2.0
+        self.y = self.rect.y + self.rect.h/2.0
+        self.hit_rect = self.rect
+        self.hit_rect.center = self.rect.center
+
+
 class Obstacle(pg.sprite.Sprite):
     def __init__(self, game, id, x, y, w, h):
         self.groups = game.walls
@@ -198,6 +316,7 @@ class Obstacle(pg.sprite.Sprite):
         self.rect = pg.Rect(x,y,w,h)
         self.x = x + w/2.0
         self.y = y + h/2.0
+        self.pos = vec(self.x, self.y)
         self.rect.x = x 
         self.rect.y = y
         self.width = w

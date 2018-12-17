@@ -117,7 +117,7 @@ class Game:
         if self.time < 3:
             self.color_light1 = RED
             self.color_light = RED
-            self.traffic_light.light_status = RED
+            self.traffic_light.light_status = (3 - self.time)/8.0 + 0.625
             self.color_light2 = HIGH_YELLOW
             self.color_light3 = HIGH_GREEN
         elif self.time < 6:
@@ -126,13 +126,13 @@ class Game:
             self.color_light2 = HIGH_YELLOW
             self.color_light3 = GREEN
             self.color_light = GREEN
-            self.traffic_light.light_status = GREEN
+            self.traffic_light.light_status = (6 - self.time)/8.0 
         elif self.time < 8:
             self.times = self.time - 5
             self.color_light1 = HIGH_RED
             self.color_light2 = YELLOW
             self.color_light = YELLOW
-            self.traffic_light.light_status = YELLOW
+            self.traffic_light.light_status = (8 - self.time)/8.0 + 0.458
             self.color_light3 = HIGH_GREEN
             
 

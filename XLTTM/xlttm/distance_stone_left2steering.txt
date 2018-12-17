@@ -1,0 +1,10 @@
+near,farleft,hardright
+near,left,hardright
+near,middle,right
+near,right,right
+near,farright,middle
+normal,farleft,right
+normal,farright,middle
+normal,right,right
+normal,left,right
+normal,middle,right

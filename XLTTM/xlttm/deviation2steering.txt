@@ -1,0 +1,5 @@
+farleft,hardright
+left,right
+middle,middle
+right,left
+farright,hardleft

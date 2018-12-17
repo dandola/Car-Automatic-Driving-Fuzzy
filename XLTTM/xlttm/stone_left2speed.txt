@@ -1,0 +1,6 @@
+near,near,_,stop
+near,normal,farleft,slower
+near,normal,left,slower
+near,normal,middle,slow
+near,normal,right,medium
+near,normal,farright,medium
