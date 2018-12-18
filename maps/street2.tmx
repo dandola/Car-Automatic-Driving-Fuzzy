@@ -111,7 +111,7 @@
   <object id="103" name="dest" x="1152.38" y="117.64" width="6.20833" height="5.91667"/>
   <object id="105" name="player" x="34" y="641.333" width="32" height="32" rotation="0.27622"/>
   <object id="106" name="stone" x="1104" y="476" width="32" height="32"/>
-  <object id="107" name="stone" x="1170.67" y="316" width="32" height="32"/>
+  <object id="107" name="stone" x="1174.67" y="390.667" width="32" height="32"/>
   <object id="109" name="stone" x="1105" y="314" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="TrafficLight">

@@ -32,6 +32,13 @@ def draw_times(surf, text, size, x,y) :
     text_rect.midtop = (x, y)
     surf.blit(text_surface, text_rect)
 
+def gameover(surf, text, size, x,y) :
+    font= pg.font.Font(pg.font.match_font('arial'),size)
+    text_surface = font.render(text, True, WHITE)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
+
 def draw_speed(surf, text, size, x,y) :
     font= pg.font.Font(pg.font.match_font('arial'),size)
     text_surface = font.render(text, True, WHITE)
@@ -159,6 +166,8 @@ class Game:
         # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
         pg.display.flip()
 
+
+
     def events(self):
         # catch all events here
         for event in pg.event.get():
@@ -183,3 +192,8 @@ while True:
     g.new()
     g.run()
     g.show_go_screen()
+    if g.playing == False:
+        gameover(g.screen, "Finish", 50, 680, 10)
+        pg.display.flip()
+        pg.time.delay(3000)
+        g.quit()
