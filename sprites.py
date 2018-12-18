@@ -94,8 +94,6 @@ class Player(pg.sprite.Sprite):
             list_expected_walls.sort()
             rot0 = (list_expected_walls[0]["wall"].pos - self.pos).angle_to(vec(self.path[self.index] - self.pos))
             rot1 = (list_expected_walls[1]["wall"].pos - self.pos).angle_to(vec(self.path[self.index] - self.pos))
-            print rot0%360
-            print rot1%360
             if rot0%360 > 0 and rot0%360 < 180:
                 left = list_expected_walls[0]
             else:
@@ -104,31 +102,9 @@ class Player(pg.sprite.Sprite):
                 right = list_expected_walls[1]
             else:
                 left = list_expected_walls[1]
-            print left["wall"].id, right["wall"].id
             return left["distance"], right["distance"]
         else:
-            print 0.5, 0.5
             return 0.5, 0.5
-
-
-    def get_distance_wall_stone(self, stone):
-        list_expected_walls = []
-        list_walls = []
-        for wall in self.game.walls:
-            axis_x = math.fabs(wall.x - stone.pos.x)
-            axis_y = math.fabs(wall.y - stone.pos.y)
-            distance = math.sqrt(axis_x**2 + axis_y**2)
-            if axis_x <= wall.width/2:
-                distance =  axis_y - wall.height/2.0
-            elif axis_y <= wall.height/2.0:
-                distance =  axis_x - wall.width/2.0
-            else:
-                distance = math.sqrt(axis_x**2 + axis_y**2)
-            list_walls.append({"wall": wall, "distance": distance})
-        list_walls.sort()
-        # for wall in list_walls:
-            # print wall['wall'].id, wall["distance"]
-        # print "\n"
     
     def get_distance_traffic(self):
         axis_x = math.fabs(self.pos.x - self.game.traffic_light.x)
@@ -143,20 +119,38 @@ class Player(pg.sprite.Sprite):
             return axis_x - self.game.traffic_light.width/2.0 - self.rect.w/2.0
 
     def get_min_distance_stone(self, dest):
-        angle = (dest - self.pos).angle_to(vec(1,0))
+        distance_two_stones = 200
+        angle = (dest - self.pos).angle_to(dest - self.pos)
+        list_stones = []
         closest_stone = None
         min = self.distance(dest)
         for stone in self.game.stones:
-            rot_stone = (stone.pos - self.pos).angle_to(vec(1,0))
+            rot_stone = (stone.pos - self.pos).angle_to(dest - self.pos)
             distance = self.distance(stone) -  stone.rect.w/2.0 - self.rect.w/2.0
             if distance >= 100:
                 continue
-            if math.fabs(angle - rot_stone) < 90 and distance <= min:
-                min = distance
-                closest_stone = stone
+            if math.fabs(angle - rot_stone) < 90:
+                list_stones.append({"stone": stone, "distance": distance})
+                if distance <= min:
+                    min = distance
+                    closest_stone = stone
+        if len(list_stones) >= 2:
+            list_stones.sort()
+            stone1 = list_stones[0]
+            stone2 = list_stones[1]
+            rot1 = (stone1["stone"].pos - self.pos).angle_to(dest - self.pos)
+            rot2 = (stone2["stone"].pos - self.pos).angle_to(dest - self.pos)
+            if rot1*rot2 < 0:
+                axis_x = math.fabs(stone1["stone"].pos.x - stone2["stone"].pos.x) - stone1["stone"].rect.w
+                axis_y = math.fabs(stone1["stone"].pos.y - stone2["stone"].pos.y) - stone1["stone"].rect.h
+                distance_two_stones = max(axis_x, axis_y)
+                print axis_x, axis_y
+
         if min == self.distance(dest):
             min = 200
-        return closest_stone, min
+        return closest_stone, min, distance_two_stones
+
+
 
 
     def get_deviation(self, deviation1, deviation2):
@@ -196,7 +190,7 @@ class Player(pg.sprite.Sprite):
 
 
     def update(self):
-        nearest_stone = None
+        distance_two_stones = nearest_stone = None
         distance_stone = None
         deviation = vel = None
         deviation2 = deviation1 = None
@@ -208,7 +202,10 @@ class Player(pg.sprite.Sprite):
         sum = left_wall + right_wall
         dev = left_wall*1.0/(right_wall + left_wall)
         distance_traffic_light = self.get_distance_traffic()
-        nearest_stone, distance_stone = self.get_min_distance_stone(self.path[self.index])
+        nearest_stone, distance_stone, distance_two_stones = self.get_min_distance_stone(self.path[self.index])
+        if distance_two_stones >= 50:
+            distance_two_stones = 200
+
         if nearest_stone:
             self.closest_stone = nearest_stone
             angle_car_stone = (self.closest_stone.pos - self.pos).angle_to(self.path[self.index] - self.pos)
@@ -224,10 +221,10 @@ class Player(pg.sprite.Sprite):
         vel1 = cal_speed(status_light, distance_traffic_light, dev)
         if left_right_stone == "left":
             deviation2 =  cal_steering_left(dev, distance_stone)
-            vel2 = cal_speed_stone_left( dev, distance_stone)
+            vel2 = cal_speed_stone_left( dev, distance_stone, distance_two_stones/4.0)
         elif left_right_stone == "right":
             deviation2 =  cal_steering_right(dev, distance_stone)
-            vel2 = cal_speed_stone_right( dev, distance_stone)
+            vel2 = cal_speed_stone_right( dev, distance_stone, distance_two_stones/4.0)
         else:
             deviation2 = None
             vel2 = None
@@ -242,10 +239,11 @@ class Player(pg.sprite.Sprite):
             self.rot = (self.path[self.index] - self.pos).angle_to(vec(1,0)) + angle*(-1)
         else:
             self.rot = (self.path[self.index] - self.pos).angle_to(vec(1,0)) + angle
-        self.image = pg.transform.rotate(self.game.player_img, self.rot)
-        self.rect = self.image.get_rect()
-        self.rect.center = self.pos
-        self.hit_rect.center = self.pos
+        if self.player_speed >= 5:
+            self.image = pg.transform.rotate(self.game.player_img, self.rot)
+            self.rect = self.image.get_rect()
+            self.rect.center = self.pos
+            self.hit_rect.center = self.pos
         distance = self.distance(self.path[self.index])
         self.move(distance)
         if distance <= 30:
