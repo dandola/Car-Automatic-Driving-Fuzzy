@@ -108,31 +108,31 @@ class Game:
 
 
     def draw_traffic(self):
-        self.time = pg.time.get_ticks()/1000 % 8
+        self.time = pg.time.get_ticks()/1000 % 10
         # print self.time
         self.times = self.time + 1
         self.color_light1 = HIGH_RED
         self.color_light2 = HIGH_YELLOW
         self.color_light3 = HIGH_GREEN
-        if self.time < 3:
+        if self.time < 4:
             self.color_light1 = RED
             self.color_light = RED
-            self.traffic_light.light_status = (3 - self.time)/8.0 + 0.625
+            self.traffic_light.light_status = (4 - self.time)/10.0 + 0.625
             self.color_light2 = HIGH_YELLOW
             self.color_light3 = HIGH_GREEN
-        elif self.time < 6:
+        elif self.time < 8:
             self.times = self.time - 2
             self.color_light1 = HIGH_RED
             self.color_light2 = HIGH_YELLOW
             self.color_light3 = GREEN
             self.color_light = GREEN
-            self.traffic_light.light_status = (6 - self.time)/8.0 
-        elif self.time < 8:
+            self.traffic_light.light_status = (8 - self.time)/10.0
+        elif self.time < 10:
             self.times = self.time - 5
             self.color_light1 = HIGH_RED
             self.color_light2 = YELLOW
             self.color_light = YELLOW
-            self.traffic_light.light_status = (8 - self.time)/8.0 + 0.458
+            self.traffic_light.light_status = (10 - self.time)/10.0 + 0.458
             self.color_light3 = HIGH_GREEN
             
 
