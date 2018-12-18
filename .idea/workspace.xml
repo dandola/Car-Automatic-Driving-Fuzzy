@@ -31,13 +31,13 @@
       <file leaf-file-name="sprites.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/sprites.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="156">
-              <caret line="205" column="35" lean-forward="false" selection-start-line="205" selection-start-column="35" selection-end-line="205" selection-end-column="35" />
+            <state relative-caret-position="1874">
+              <caret line="271" column="38" lean-forward="true" selection-start-line="271" selection-start-column="38" selection-end-line="271" selection-end-column="38" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
                 <element signature="e#4486#5205#0" expanded="false" />
-                <element signature="e#6736#7430#0" expanded="false" />
-                <element signature="e#7480#7758#0" expanded="false" />
+                <element signature="e#6698#7392#0" expanded="false" />
+                <element signature="e#7442#7720#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -418,7 +418,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="25" width="1299" height="743" extended-state="6" />
+    <frame x="67" y="25" width="1299" height="743" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2633229" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -468,8 +468,8 @@
           <folding>
             <element signature="e#0#19#0" expanded="true" />
             <element signature="e#4486#5205#0" expanded="false" />
-            <element signature="e#6736#7430#0" expanded="false" />
-            <element signature="e#7480#7758#0" expanded="false" />
+            <element signature="e#6698#7392#0" expanded="false" />
+            <element signature="e#7442#7720#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -541,8 +541,8 @@
           <folding>
             <element signature="e#0#19#0" expanded="true" />
             <element signature="e#4486#5205#0" expanded="false" />
-            <element signature="e#6736#7430#0" expanded="false" />
-            <element signature="e#7480#7758#0" expanded="false" />
+            <element signature="e#6698#7392#0" expanded="false" />
+            <element signature="e#7442#7720#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -691,13 +691,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/sprites.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="205" column="35" lean-forward="false" selection-start-line="205" selection-start-column="35" selection-end-line="205" selection-end-column="35" />
+        <state relative-caret-position="1874">
+          <caret line="271" column="38" lean-forward="true" selection-start-line="271" selection-start-column="38" selection-end-line="271" selection-end-column="38" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
             <element signature="e#4486#5205#0" expanded="false" />
-            <element signature="e#6736#7430#0" expanded="false" />
-            <element signature="e#7480#7758#0" expanded="false" />
+            <element signature="e#6698#7392#0" expanded="false" />
+            <element signature="e#7442#7720#0" expanded="false" />
           </folding>
         </state>
       </provider>

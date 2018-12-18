@@ -103,7 +103,7 @@
   <object id="25" name="point" x="1169.57" y="639.793" width="3.52355" height="3.00906"/>
   <object id="51" name="wall" x="1216" y="63.9937" width="64" height="575.938"/>
   <object id="53" name="stone" x="666.166" y="660.833" width="32" height="32"/>
-  <object id="67" name="stone" x="1032.5" y="597.916" width="32" height="32"/>
+  <object id="67" name="stone" x="1033.83" y="587.25" width="32" height="32"/>
   <object id="68" name="stone" x="938.683" y="657.187" width="32" height="32"/>
   <object id="69" name="stone" x="1148.35" y="900.854" width="32" height="32"/>
   <object id="70" name="stone" x="1100.35" y="208.854" width="32" height="32"/>

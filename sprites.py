@@ -144,8 +144,6 @@ class Player(pg.sprite.Sprite):
                 axis_x = math.fabs(stone1["stone"].pos.x - stone2["stone"].pos.x) - stone1["stone"].rect.w
                 axis_y = math.fabs(stone1["stone"].pos.y - stone2["stone"].pos.y) - stone1["stone"].rect.h
                 distance_two_stones = max(axis_x, axis_y)
-                print axis_x, axis_y
-
         if min == self.distance(dest):
             min = 200
         return closest_stone, min, distance_two_stones
@@ -205,7 +203,6 @@ class Player(pg.sprite.Sprite):
         nearest_stone, distance_stone, distance_two_stones = self.get_min_distance_stone(self.path[self.index])
         if distance_two_stones >= 50:
             distance_two_stones = 200
-
         if nearest_stone:
             self.closest_stone = nearest_stone
             angle_car_stone = (self.closest_stone.pos - self.pos).angle_to(self.path[self.index] - self.pos)
@@ -231,10 +228,10 @@ class Player(pg.sprite.Sprite):
 
         vel = self.get_velocity(vel1, vel2)
         deviation = self.get_deviation(deviation1, deviation2)
-        # --> vel, deviation
+
         self.player_speed = vel*100
         angle = (math.asin(math.fabs((deviation - 0.5)/0.5)))*180/math.pi
-        # print angle
+
         if deviation > 0.5:
             self.rot = (self.path[self.index] - self.pos).angle_to(vec(1,0)) + angle*(-1)
         else:
